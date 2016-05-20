@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     editwidget.cpp \
     notetree.cpp \
-    notewidget.cpp
+    notewidget.cpp \
+    textedit.cpp
 
 HEADERS  += mainwindow.h \
     editwidget.h \
     notetree.h \
-    notewidget.h
+    notewidget.h \
+    textedit.h
 
 FORMS    += mainwindow.ui
 

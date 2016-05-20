@@ -1,7 +1,8 @@
 #ifndef EDITWIDGET_H
 #define EDITWIDGET_H
 
-#include <QTextEdit>
+#include "textedit.h"
+
 #include <QToolBar>
 #include <QApplication>
 
@@ -19,7 +20,7 @@ protected slots:
 
 private:
     QToolBar * toolBar;
-    QTextEdit * textEdit;
+    textEdit * textedit;
     QString name;
 
     QAction *saveAction;

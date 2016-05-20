@@ -9,7 +9,7 @@ editWidget::editWidget(QWidget *parent)
 {
     toolBar = new QToolBar(this);
     toolBar->setIconSize(QSize(25, 25));
-    textEdit = new QTextEdit(this);
+    textedit = new textEdit(this);
 
     saveAction = new QAction(QIcon(":/ico/ico/save.ico"), "保存", this);
     saveAction->setShortcut(QKeySequence::Save);
@@ -18,7 +18,7 @@ editWidget::editWidget(QWidget *parent)
 
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(toolBar);
-    layout->addWidget(textEdit);
+    layout->addWidget(textedit);
 
 
 
@@ -46,9 +46,9 @@ void editWidget::saveSlot()
 
     QTextStream out(&file);
 
-    out << textEdit->toHtml();
+    out << textedit->toHtml();
 
-    textEdit->document()->setModified(false);
+    textedit->document()->setModified(false);
 
     file.close();
 }
@@ -61,6 +61,6 @@ void editWidget::loadText(QString str)
     if (!openFile.open(QIODevice::ReadOnly))
         return;
     QTextStream in(&openFile);
-    textEdit->setText(in.readAll());
+    textedit->setText(in.readAll());
     openFile.close();
 }
