@@ -19,6 +19,9 @@ editWidget::editWidget(QWidget *parent)
     QVBoxLayout * layout = new QVBoxLayout();
     layout->addWidget(toolBar);
     layout->addWidget(textEdit);
+
+
+
     this->setLayout(layout);
 
 

@@ -14,6 +14,9 @@ noteWidget::noteWidget(QWidget *parent) : QWidget(parent)
     layout->addWidget(nt);
     layout->addWidget(ew);
 
+    layout->setStretchFactor(nt, 2);
+    layout->setStretchFactor(ew, 5);
+
     this->setLayout(layout);
 
     connect(nt, SIGNAL(doubleclicked(QString)), this, SLOT(reloadfileSlot(QString)));
