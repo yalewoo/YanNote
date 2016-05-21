@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QVBoxLayout>
 
+#include "docimport_dialog.h"
 
 docdetail::docdetail(QWidget *parent) : QWidget(parent)
 {
@@ -77,5 +78,6 @@ void docdetail::loadSlot(QString str)
 
 void docdetail::addSlot()
 {
-
+    docimport_dialog * d = new docimport_dialog(this);
+    d->exec();
 }
