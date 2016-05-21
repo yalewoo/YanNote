@@ -19,11 +19,7 @@ docwidget::docwidget(QWidget *parent) : QWidget(parent)
 
     this->setLayout(layout);
 
-    connect(dt, SIGNAL(doubleclicked(QString)), this, SLOT(reloadfileSlot(QString)));
+    connect(dt, SIGNAL(doubleclicked(QString)), dd, SLOT(changeDir(QString)));
 }
 
 
-void docwidget::reloadfileSlot(QString str)
-{
-
-}

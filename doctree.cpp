@@ -53,6 +53,23 @@ void doctree::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
+void doctree::mousePressEvent(QMouseEvent *event)
+{
+    QTreeView::mousePressEvent(event);
+
+    if (event->button() == Qt::LeftButton)
+    {
+        QModelIndex index = currentIndex();
+
+        QFileInfo info = model->fileInfo(index);
+
+        QString name = info.path() + "/" + info.fileName();
+
+        emit doubleclicked(name);
+
+    }
+}
+
 //鼠标右键
 void doctree::customContextMenuSlot(const QPoint p)
 {

@@ -1,7 +1,9 @@
 #include "docimport_dialog.h"
 
-
+#include <QDebug>
 #include <QGridLayout>
+#include <QFileDialog>
+
 
 docimport_dialog::docimport_dialog(QWidget * parent) : QDialog(parent)
 {
@@ -38,6 +40,11 @@ docimport_dialog::docimport_dialog(QWidget * parent) : QDialog(parent)
     layout->addWidget(okButton, 4, 2);
 
     this->setLayout(layout);
+
+
+    connect(openButton, SIGNAL(clicked(bool)), this, SLOT(on_openbutton()));
+    connect(okButton, SIGNAL(clicked(bool)), this, SLOT(on_okButton()));
+
 }
 
 //docimport_dialog::~docimport_dialog(){
@@ -55,16 +62,32 @@ docimport_dialog::docimport_dialog(QWidget * parent) : QDialog(parent)
 //    delete okButton;
 //}
 
-void docimport_dialog::on_buttonBox_accepted()
+void docimport_dialog::on_okButton()
 {
+    Docparam p;
+    p.fullpath = path->text();
+    p.name = name->text();
+    p.author = author->text();
+    p.pub = pub->text();
+    p.year = year->text();
 
 
+    emit sendData(p);
 
-
-    //emit sendData(ui->lineEdit->text());
+    this->close();
 }
 
 void docimport_dialog::on_openbutton()
 {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("open file"));
+    qDebug() << fileName;
 
+    QFileInfo f(fileName);
+
+    path->setText(fileName);
+    name->setText(f.baseName());
+
+
+
+    //qDebug() << "queding clicked";
 }

@@ -16,7 +16,7 @@ public:
 signals:
     void  sendData(Docparam);
 private slots:
-    void on_buttonBox_accepted();
+    void on_okButton();
     void on_openbutton();
 
 private:

@@ -4,21 +4,22 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QVBoxLayout>
+#include <QDebug>
+#include <QStandardItemModel>
 
 #include "docimport_dialog.h"
 
 docdetail::docdetail(QWidget *parent) : QWidget(parent)
 {
-    table = new QTableWidget(this);
-    table->setColumnCount(4); //设置列数
-    QStringList header;
-    header<<"名称"<<"作者" << "出版地" << "年份";
-    table->setHorizontalHeaderLabels(header);
+    table = new QTableView(this);
 
-    table->setItem(0,0,new QTableWidgetItem("Jan"));
-    table->setItem(1,0,new QTableWidgetItem("Feb"));
-    table->setItem(2,0,new QTableWidgetItem("Mar"));
+    model = new QStandardItemModel();
+    setHeader();
+    table->setModel(model);
 
+
+
+    num = 0;
 
 
     table->show();
@@ -49,35 +50,109 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
 
 void docdetail::saveSlot()
 {
-    QFile file(name);
-
-    if (!file.open(QIODevice::WriteOnly))
-    {
-        QMessageBox::warning(this, "ERROR", "Can't save the file", QMessageBox::Yes);
-        return;
-    }
-
-    QTextStream out(&file);
-
-    out << "table->";
-
-
-    file.close();
+    save();
 }
 
 void docdetail::loadSlot(QString str)
 {
-    name = str;
-    QFile openFile(str);
 
-    if (!openFile.open(QIODevice::ReadOnly))
-        return;
-
-    openFile.close();
 }
 
 void docdetail::addSlot()
 {
     docimport_dialog * d = new docimport_dialog(this);
+    connect(d, SIGNAL(sendData(Docparam)), this, SLOT(importSlot(Docparam)));
+
     d->exec();
+}
+
+
+void docdetail::importSlot(Docparam p)
+{
+    qDebug() << p.fullpath << "aaaa";
+
+    model->setItem(num, 0, new QStandardItem(p.name));
+    model->setItem(num, 1, new QStandardItem(p.author));
+    model->setItem(num, 2, new QStandardItem(p.pub));
+    model->setItem(num, 3, new QStandardItem(p.year));
+    model->setItem(num, 4, new QStandardItem(p.fullpath));
+
+
+    ++num;
+}
+
+void docdetail::changeDir(QString path)
+{
+    nowpath = path;
+    qDebug() << nowpath;
+
+    model->clear();
+    setHeader();
+
+    load();
+}
+
+void docdetail::createInitFile()
+{
+    QString path = nowpath + "/doc.txt";
+    QFile f(nowpath);
+    f.open(QIODevice::WriteOnly|QIODevice::Text);
+
+    QTextStream out(&f);
+    out<<"0"<<endl;
+    out.flush();
+    f.close();
+}
+
+void docdetail::save()
+{
+    QString path = nowpath + "/doc.txt";
+    qDebug() << path;
+    QFile f(path);
+    f.open(QIODevice::WriteOnly|QIODevice::Text);
+
+    QTextStream out(&f);
+    out << num << endl;
+
+    for (int i = 0; i < num; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            out << model->item(i, j)->text() << endl;
+        }
+    }
+    out.flush();
+    f.close();
+}
+void docdetail::load()
+{
+    QString path = nowpath + "/doc.txt";
+    qDebug() << path;
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly|QIODevice::Text))
+        return;
+
+    QTextStream in(&f);
+    num = in.readLine().toInt();
+
+
+    for (int i = 0; i < num; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            QString str = in.readLine();
+            model->setItem(i, j, new QStandardItem(str));
+        }
+    }
+
+    f.close();
+}
+
+void docdetail::setHeader()
+{
+    model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("标题")));
+    model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("作者")));
+    model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("出版地")));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("年份")));
+    model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("链接")));
 }

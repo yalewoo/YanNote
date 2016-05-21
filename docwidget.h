@@ -15,7 +15,7 @@ public:
     QString filename;
 
 protected slots:
-    void reloadfileSlot(QString str);
+
 
 public:
 

@@ -16,6 +16,8 @@ public:
     explicit doctree(QWidget *parent = 0);
 
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
 
 signals:
     void doubleclicked(QString str);
