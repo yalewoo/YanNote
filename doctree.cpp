@@ -1,4 +1,4 @@
-#include "notetree.h"
+#include "doctree.h"
 
 #include <QModelIndex>
 #include <QDebug>
@@ -8,19 +8,17 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-
-noteTree::noteTree(QWidget *parent) : QTreeView(parent)
+doctree::doctree(QWidget *parent) : QTreeView(parent)
 {
     model = new QFileSystemModel;
     model->setReadOnly(false);
-
+    model->setFilter(QDir::Dirs|QDir::NoDotAndDotDot);        //只显示文件夹
     //qDebug() << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 
 
-    model->setRootPath("E:\\Documents\\notes\\note");
-
+    model->setRootPath("E:\\Documents\\notes\\doc");
     this->setModel(model);
-    this->setRootIndex(model->index("E:\\Documents\\notes\\note"));
+    this->setRootIndex(model->index("E:\\Documents\\notes\\doc"));
 
     this->header()->setStretchLastSection(true);
     this->header()->setSortIndicator(0, Qt::AscendingOrder);
@@ -28,7 +26,7 @@ noteTree::noteTree(QWidget *parent) : QTreeView(parent)
     this->header()->setSectionsClickable(true);
     this->setSortingEnabled(true);
 
-    //只显示文件名
+    //只显示文件名 不显示表头
     this->hideColumn(2);
     this->hideColumn(3);
     this->hideColumn(1);
@@ -37,14 +35,10 @@ noteTree::noteTree(QWidget *parent) : QTreeView(parent)
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuSlot(QPoint)));
 
-
 }
 
-
-
-
 // 鼠标双击
-void noteTree::mouseDoubleClickEvent(QMouseEvent *event)
+void doctree::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -60,7 +54,7 @@ void noteTree::mouseDoubleClickEvent(QMouseEvent *event)
 }
 
 //鼠标右键
-void noteTree::customContextMenuSlot(const QPoint p)
+void doctree::customContextMenuSlot(const QPoint p)
 {
     QModelIndex index = currentIndex();
 
@@ -83,7 +77,7 @@ void noteTree::customContextMenuSlot(const QPoint p)
 
 }
 
-void noteTree::renameSlot()
+void doctree::renameSlot()
 {
     QString path = info.filePath();
     QString oldname = info.baseName();
@@ -100,7 +94,7 @@ void noteTree::renameSlot()
     file.close();
 }
 
-void noteTree::newFileSlot()
+void doctree::newFileSlot()
 {
     QString path = info.filePath();
 
@@ -120,7 +114,7 @@ void noteTree::newFileSlot()
     emit doubleclicked(newname);
 }
 
-void noteTree::newDirSlot()
+void doctree::newDirSlot()
 {
     QString path = info.filePath();
 

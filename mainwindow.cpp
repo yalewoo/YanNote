@@ -7,8 +7,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QTabWidget * tabwidget = new QTabWidget(this);
+
+
     nw = new noteWidget(this);
-    this->setCentralWidget(nw);
+    dw = new docwidget(this);
+
+    tabwidget->addTab(nw, "笔记");
+    tabwidget->addTab(dw, "文献");
+
+    this->setCentralWidget(tabwidget);
 }
 
 MainWindow::~MainWindow()

@@ -3,5 +3,6 @@
         <file>ico/copy.ico</file>
         <file>ico/paste.ico</file>
         <file>ico/save.ico</file>
+        <file>ico/import.ico</file>
     </qresource>
 </RCC>

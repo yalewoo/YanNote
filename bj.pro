@@ -17,13 +17,22 @@ SOURCES += main.cpp\
     editwidget.cpp \
     notetree.cpp \
     notewidget.cpp \
-    textedit.cpp
+    textedit.cpp \
+    docwidget.cpp \
+    doctree.cpp \
+    docdetail.cpp \
+    docimport_dialog.cpp
 
 HEADERS  += mainwindow.h \
     editwidget.h \
     notetree.h \
     notewidget.h \
-    textedit.h
+    textedit.h \
+    docwidget.h \
+    doctree.h \
+    docdetail.h \
+    docparam.h \
+    docimport_dialog.h
 
 FORMS    += mainwindow.ui
 
