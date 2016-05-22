@@ -4,5 +4,8 @@
         <file>ico/paste.ico</file>
         <file>ico/save.ico</file>
         <file>ico/import.ico</file>
+        <file>ico/openinexplorer.png</file>
+        <file>ico/doc_openinexplorer.png</file>
+        <file>ico/doc_createreference.png</file>
     </qresource>
 </RCC>

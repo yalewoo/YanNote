@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tabwidget->addTab(nw, "笔记");
     tabwidget->addTab(dw, "文献");
 
+    this->resize(1000, 600);
+
     this->setCentralWidget(tabwidget);
 }
 

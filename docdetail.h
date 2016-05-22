@@ -21,6 +21,10 @@ public:
 protected slots:
     void saveSlot();    //保存
     void addSlot(); //导入文献
+    void openInExplorerSlot(); //在资源管理器中查看
+    void openSlot();    //直接打开文献
+    void createReferenceSlot(); //生成参考文献格式
+
     void importSlot(Docparam p);
     void changeDir(QString path);
 
@@ -31,6 +35,11 @@ private:
 
     QAction * saveAction;
     QAction * addAction;
+
+    QAction * openInExplorerAction;
+    QAction * openAction;
+
+    QAction * createReference;
 
     void createInitFile();
     QStandardItemModel *model;

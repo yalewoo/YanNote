@@ -6,6 +6,11 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QStandardItemModel>
+#include <QFileInfo>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QClipboard>
+
 
 #include "docimport_dialog.h"
 
@@ -35,10 +40,33 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     saveAction->setShortcut(QKeySequence::Save);
     toolBar->addAction(saveAction);
     connect(saveAction, SIGNAL(triggered()), this, SLOT(saveSlot()));
+    toolBar->addSeparator();
 
     addAction = new QAction(QIcon(":/ico/ico/import.ico"), "导入", this);
     toolBar->addAction(addAction);
     connect(addAction, SIGNAL(triggered()), this, SLOT(addSlot()));
+
+    openInExplorerAction = new QAction(QIcon(":/ico/ico/doc_openinexplorer.png"), "定位文件", this);
+    toolBar->addAction(openInExplorerAction);
+    connect(openInExplorerAction, SIGNAL(triggered()), this, SLOT(openInExplorerSlot()));
+
+
+    openAction = new QAction(QIcon(":/ico/ico/openinexplorer.png"), "打开文件", this);
+    toolBar->addAction(openAction);
+    connect(openAction, SIGNAL(triggered()), this, SLOT(openSlot()));
+    toolBar->addSeparator();
+
+
+    createReference = new QAction(QIcon(":/ico/ico/doc_createreference.png"), "生成参考文献格式", this);
+    toolBar->addAction(createReference);
+    connect(createReference, SIGNAL(triggered()), this, SLOT(createReferenceSlot()));
+
+
+
+
+
+
+
 
 
     QVBoxLayout * layout = new QVBoxLayout();
@@ -158,4 +186,53 @@ void docdetail::setHeader()
     model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("出版地")));
     model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("年份")));
     model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("链接")));
+}
+
+
+
+void docdetail::openInExplorerSlot()
+{
+    int n = table->currentIndex().row();
+    QString str = model->data(model->index(n,4)).toString();//第n行第4列的内容
+
+
+
+    QFileInfo fi=QFileInfo(str);
+    QString filePath;
+    filePath=fi.absolutePath();
+
+    qDebug() << filePath;
+
+    QDesktopServices::openUrl(QUrl(filePath, QUrl::TolerantMode));
+}
+
+void docdetail::openSlot()
+{
+    int n = table->currentIndex().row();
+    QString str = model->data(model->index(n,4)).toString();//第n行第4列的内容
+
+
+
+    str = "file:///" + str;
+
+    qDebug() << str;
+
+    QDesktopServices::openUrl(QUrl(str, QUrl::TolerantMode));
+}
+
+void docdetail::createReferenceSlot()
+{
+    int n = table->currentIndex().row();
+    QString str1 = model->data(model->index(n,0)).toString();
+    QString str2 = model->data(model->index(n,1)).toString();
+    QString str3 = model->data(model->index(n,2)).toString();
+    QString str4 = model->data(model->index(n,3)).toString();
+
+    QString str = "  " + str2 + "." + str1 + "." + str3 + "." + str4;
+
+    qDebug() << str;
+
+    QClipboard *board = QApplication::clipboard();
+    board->setText(str);
+
 }
