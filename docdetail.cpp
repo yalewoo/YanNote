@@ -17,7 +17,10 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     setHeader();
     table->setModel(model);
 
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setStyleSheet("selection-background-color:lightblue;"); //设置选中背景色
 
+    table->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     num = 0;
 
@@ -69,7 +72,7 @@ void docdetail::addSlot()
 
 void docdetail::importSlot(Docparam p)
 {
-    qDebug() << p.fullpath << "aaaa";
+    //qDebug() << p.fullpath << "aaaa";
 
     model->setItem(num, 0, new QStandardItem(p.name));
     model->setItem(num, 1, new QStandardItem(p.author));
@@ -84,7 +87,7 @@ void docdetail::importSlot(Docparam p)
 void docdetail::changeDir(QString path)
 {
     nowpath = path;
-    qDebug() << nowpath;
+    //qDebug() << nowpath;
 
     model->clear();
     setHeader();
@@ -107,7 +110,7 @@ void docdetail::createInitFile()
 void docdetail::save()
 {
     QString path = nowpath + "/doc.txt";
-    qDebug() << path;
+    //qDebug() << path;
     QFile f(path);
     f.open(QIODevice::WriteOnly|QIODevice::Text);
 
@@ -127,7 +130,7 @@ void docdetail::save()
 void docdetail::load()
 {
     QString path = nowpath + "/doc.txt";
-    qDebug() << path;
+    //qDebug() << path;
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
