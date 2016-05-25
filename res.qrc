@@ -7,5 +7,9 @@
         <file>ico/openinexplorer.png</file>
         <file>ico/doc_openinexplorer.png</file>
         <file>ico/doc_createreference.png</file>
+        <file>ico/format_text_bold.ico</file>
+        <file>ico/format_text_italic.ico</file>
+        <file>ico/format_text_underline.ico</file>
+        <file>ico/format_color.ico</file>
     </qresource>
 </RCC>

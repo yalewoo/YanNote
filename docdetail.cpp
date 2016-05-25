@@ -39,27 +39,27 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     saveAction = new QAction(QIcon(":/ico/ico/save.ico"), "保存", this);
     saveAction->setShortcut(QKeySequence::Save);
     toolBar->addAction(saveAction);
-    connect(saveAction, SIGNAL(triggered()), this, SLOT(saveSlot()));
+    connect(saveAction, SIGNAL(triggered()), this, SLOT(slotSave()));
     toolBar->addSeparator();
 
     addAction = new QAction(QIcon(":/ico/ico/import.ico"), "导入", this);
     toolBar->addAction(addAction);
-    connect(addAction, SIGNAL(triggered()), this, SLOT(addSlot()));
+    connect(addAction, SIGNAL(triggered()), this, SLOT(slotAddDocFromFile()));
 
     openInExplorerAction = new QAction(QIcon(":/ico/ico/doc_openinexplorer.png"), "定位文件", this);
     toolBar->addAction(openInExplorerAction);
-    connect(openInExplorerAction, SIGNAL(triggered()), this, SLOT(openInExplorerSlot()));
+    connect(openInExplorerAction, SIGNAL(triggered()), this, SLOT(slotOpenInExplorer()));
 
 
     openAction = new QAction(QIcon(":/ico/ico/openinexplorer.png"), "打开文件", this);
     toolBar->addAction(openAction);
-    connect(openAction, SIGNAL(triggered()), this, SLOT(openSlot()));
+    connect(openAction, SIGNAL(triggered()), this, SLOT(slotOpen()));
     toolBar->addSeparator();
 
 
     createReference = new QAction(QIcon(":/ico/ico/doc_createreference.png"), "生成参考文献格式", this);
     toolBar->addAction(createReference);
-    connect(createReference, SIGNAL(triggered()), this, SLOT(createReferenceSlot()));
+    connect(createReference, SIGNAL(triggered()), this, SLOT(slotCreateReference()));
 
 
 
@@ -79,7 +79,7 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
 }
 
 
-void docdetail::saveSlot()
+void docdetail::slotSave()
 {
     save();
 }
@@ -89,16 +89,16 @@ void docdetail::loadSlot(QString str)
 
 }
 
-void docdetail::addSlot()
+void docdetail::slotAddDocFromFile()
 {
     docimport_dialog * d = new docimport_dialog(this);
-    connect(d, SIGNAL(sendData(Docparam)), this, SLOT(importSlot(Docparam)));
+    connect(d, SIGNAL(sendData(Docparam)), this, SLOT(slotImport(Docparam)));
 
     d->exec();
 }
 
 
-void docdetail::importSlot(Docparam p)
+void docdetail::slotImport(Docparam p)
 {
     //qDebug() << p.fullpath << "aaaa";
 
@@ -112,7 +112,7 @@ void docdetail::importSlot(Docparam p)
     ++num;
 }
 
-void docdetail::changeDir(QString path)
+void docdetail::slotNowDirChanged(QString path)
 {
     nowpath = path;
     //qDebug() << nowpath;
@@ -190,7 +190,7 @@ void docdetail::setHeader()
 
 
 
-void docdetail::openInExplorerSlot()
+void docdetail::slotOpenInExplorer()
 {
     int n = table->currentIndex().row();
     QString str = model->data(model->index(n,4)).toString();//第n行第4列的内容
@@ -206,7 +206,7 @@ void docdetail::openInExplorerSlot()
     QDesktopServices::openUrl(QUrl(filePath, QUrl::TolerantMode));
 }
 
-void docdetail::openSlot()
+void docdetail::slotOpen()
 {
     int n = table->currentIndex().row();
     QString str = model->data(model->index(n,4)).toString();//第n行第4列的内容
@@ -220,7 +220,7 @@ void docdetail::openSlot()
     QDesktopServices::openUrl(QUrl(str, QUrl::TolerantMode));
 }
 
-void docdetail::createReferenceSlot()
+void docdetail::slotCreateReference()
 {
     int n = table->currentIndex().row();
     QString str1 = model->data(model->index(n,0)).toString();

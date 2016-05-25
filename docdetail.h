@@ -19,14 +19,14 @@ public:
     void loadSlot(QString str);
 
 protected slots:
-    void saveSlot();    //保存
-    void addSlot(); //导入文献
-    void openInExplorerSlot(); //在资源管理器中查看
-    void openSlot();    //直接打开文献
-    void createReferenceSlot(); //生成参考文献格式
+    void slotSave();    //保存
+    void slotAddDocFromFile(); //导入文献
+    void slotOpenInExplorer(); //在资源管理器中查看
+    void slotOpen();    //直接打开文献
+    void slotCreateReference(); //生成参考文献格式
 
-    void importSlot(Docparam p);
-    void changeDir(QString path);
+    void slotImport(Docparam p);
+    void slotNowDirChanged(QString path);
 
 private:
     QToolBar * toolBar;

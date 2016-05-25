@@ -19,7 +19,7 @@ docwidget::docwidget(QWidget *parent) : QWidget(parent)
 
     this->setLayout(layout);
 
-    connect(dt, SIGNAL(doubleclicked(QString)), dd, SLOT(changeDir(QString)));
+    connect(dt, SIGNAL(doubleclicked(QString)), dd, SLOT(slotNowDirChanged(QString)));
 }
 
 
