@@ -30,6 +30,8 @@ protected slots:
     void slotNowFormatChanged( const QTextCharFormat & fmt );   //格式改变
     void mergeFormat(QTextCharFormat fmt);
 
+public:
+    void slotInsertReference(QString str);
 
 
 private:

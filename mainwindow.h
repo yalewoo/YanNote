@@ -22,6 +22,10 @@ private:
     Ui::MainWindow *ui;
     noteWidget * nw;
     docwidget * dw;
+    QTabWidget * tabwidget;
+
+private slots:
+    void slotInsertReference(QString str);
 };
 
 #endif // MAINWINDOW_H

@@ -61,6 +61,10 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     toolBar->addAction(createReference);
     connect(createReference, SIGNAL(triggered()), this, SLOT(slotCreateReference()));
 
+    insertReference = new QAction(QIcon(":/ico/ico/insert_reference.png"), "插入参考标记", this);
+    toolBar->addAction(insertReference);
+    connect(insertReference, SIGNAL(triggered()), this, SLOT(slotInsertReference()));
+
 
 
 
@@ -235,4 +239,17 @@ void docdetail::slotCreateReference()
     QClipboard *board = QApplication::clipboard();
     board->setText(str);
 
+}
+
+void docdetail::slotInsertReference()
+{
+    int n = table->currentIndex().row();
+    QString str1 = model->data(model->index(n,0)).toString();
+    QString str2 = model->data(model->index(n,1)).toString();
+    QString str3 = model->data(model->index(n,2)).toString();
+    QString str4 = model->data(model->index(n,3)).toString();
+
+    QString str = "  " + str2 + "." + str1 + "." + str3 + "." + str4;
+
+    emit signalInsertReference(str);
 }

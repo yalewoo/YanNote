@@ -6,6 +6,11 @@
 #include <QVBoxLayout>
 
 #include <QColorDialog>
+#include <QDebug>
+
+
+#include <QTextCursor>
+#include <QTextBlockFormat>
 
 
 editWidget::editWidget(QWidget *parent)
@@ -67,7 +72,7 @@ editWidget::editWidget(QWidget *parent)
     connect( italicBtn, SIGNAL( clicked() ), this, SLOT( slotItalic() ) );
     connect( underlineBtn, SIGNAL( clicked() ), this, SLOT( slotUnder() ) );
     connect( colorBtn, SIGNAL( clicked() ), this, SLOT( slotColor() ) );
-    connect( textedit, SIGNAL( currentCharFormatChanged( const QTextCharFormat & ) ), this, SLOT( slotCurrentFormatChanged( const QTextCharFormat& ) ) );
+    connect( textedit, SIGNAL( currentCharFormatChanged( const QTextCharFormat & ) ), this, SLOT( slotNowFormatChanged( const QTextCharFormat& ) ) );
 
 
     //设置布局 工具栏在上 编辑器在下
@@ -135,7 +140,6 @@ void editWidget::slotBold()
        QTextCharFormat fmt;
        fmt.setFontWeight(boldBtn->isChecked() ? QFont::Bold : QFont::Normal);
        mergeFormat(fmt);
-       //pText->mergeCurrentCharFormat(fmt);
 }
 
 void editWidget::slotItalic()
@@ -181,4 +185,22 @@ void editWidget::mergeFormat(QTextCharFormat fmt)
               cursor.select(QTextCursor::WordUnderCursor);
        cursor.mergeCharFormat(fmt);
        textedit->mergeCurrentCharFormat(fmt);
+}
+
+void editWidget::slotInsertReference(QString str)
+{
+    qDebug() << str;
+
+    QTextCursor cursor(textedit->textCursor());
+
+    QTextCharFormat fmt(cursor.blockCharFormat());
+    fmt.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
+
+    cursor.insertText("[2]", fmt);
+
+
+
+
+
+
 }

@@ -11,5 +11,6 @@
         <file>ico/format_text_italic.ico</file>
         <file>ico/format_text_underline.ico</file>
         <file>ico/format_color.ico</file>
+        <file>ico/insert_reference.png</file>
     </qresource>
 </RCC>
