@@ -205,6 +205,7 @@ void editWidget::mergeFormat(QTextCharFormat fmt)
 
 void editWidget::slotInsertReference(QString str)
 {
+    int thisnum;
     qDebug() << str;
 
     QTextDocument * doc = textedit->document();
@@ -217,9 +218,40 @@ void editWidget::slotInsertReference(QString str)
     //查找上一个引用的数字
     QRegularExpression re("\[[0-9]+\]");
     QTextCursor c = doc->find(re, cursor, QTextDocument::FindBackward);
+    QTextCursor c2 = doc->find(re, cursor);
+
+
+    QTextCursor ref_pos;
+    QTextCursor ref_pos2;
+    ref_pos = doc->find("参考文献", cursor);
+    while (!ref_pos.isNull())
+    {
+        ref_pos2 = ref_pos;
+        ref_pos = doc->find("参考文献", ref_pos);
+    }
+
+
+
+    bool atfirst = false;
     if (c.isNull()) //没有上一个引用 则从1开始编号
     {
-        cursor.insertText("[1]", fmt);
+        thisnum = 1;
+        atfirst = true;
+        if (c2.isNull())    //第一次插入引用
+        {
+            cursor.insertText("[1]", fmt);
+
+
+
+            cursor.movePosition(QTextCursor::End);
+
+            cursor.insertText("\n\n参考文献\n[1]");
+            cursor.insertText(str);
+
+            return;
+        }
+        else
+            cursor.insertText("[1]", fmt);
     }
     else
     {
@@ -231,38 +263,34 @@ void editWidget::slotInsertReference(QString str)
         //qDebug() << id;
 
         int num = id.toInt();
+        thisnum = num;
 
         //qDebug() << num;
 
-        QString str;
-        str.sprintf("[%d]", num+1);
+        QString str1;
+        str1.sprintf("[%d]", num+1);
 
 
-        cursor.insertText(str, fmt);
+        cursor.insertText(str1, fmt);
 
 
 
     }
 
     //插入后 后面的引用全部加1
-    bool first = true;
 
     c = doc->find(re, cursor);
-    while (!c.isNull())
+    while (!c.isNull() && c < ref_pos2)
     {
         QString id = c.selectedText();
-        //qDebug() << id;
 
         id.replace("[", "");
         id.replace("]", "");
-        //qDebug() << id;
 
         int num = id.toInt();
 
-        //qDebug() << num;
-
-        QString str;
-        str.sprintf("[%d]", num+1);
+        QString str1;
+        str1.sprintf("[%d]", num+1);
 
         c.removeSelectedText();
 
@@ -270,9 +298,79 @@ void editWidget::slotInsertReference(QString str)
         fmt2.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
 
 
-        c.insertText(str, fmt2);
+        c.insertText(str1, fmt2);
 
         c = doc->find(re, c);
+
+
+    }
+
+
+    //修改参考文献处
+
+    QTextCursor refc2 = ref_pos2;
+
+
+    //插入
+    if (atfirst)
+    {
+
+        refc2.movePosition(QTextCursor::EndOfLine);
+
+        refc2.insertText("\n[1] ");
+        refc2.insertText(str);
+
+
+    }
+    else
+    {
+        QString tofind;
+
+        qDebug() << "insert" << thisnum;
+        tofind.sprintf("[%d]", thisnum);
+
+        refc2 = doc->find(tofind, refc2);
+
+        refc2.movePosition(QTextCursor::EndOfLine);
+
+        QString toinsert;
+        toinsert.sprintf("\n[%d]", thisnum+1);
+        toinsert = toinsert + str;
+        refc2.insertText(toinsert);
+
+
+
+
+    }
+
+
+
+    //递增
+    QRegularExpression re2("\[[0-9]+\]");
+    c = doc->find(re2, refc2);
+
+    while (!c.isNull())
+    {
+        QString id = c.selectedText();
+        //qDebug() << id;
+
+        id.replace("[", "");
+        id.replace("]", "");
+
+
+        int num = id.toInt();
+
+
+        QString str1;
+        str1.sprintf("[%d]", num+1);
+
+        c.removeSelectedText();
+
+
+        c.insertText(str1);
+
+        c = doc->find(re2, c);
+
     }
 
 
