@@ -12,5 +12,7 @@
         <file>ico/format_text_underline.ico</file>
         <file>ico/format_color.ico</file>
         <file>ico/insert_reference.png</file>
+        <file>ico/nextref.png</file>
+        <file>ico/prevref.png</file>
     </qresource>
 </RCC>

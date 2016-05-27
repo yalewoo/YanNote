@@ -11,6 +11,10 @@
 
 #include <QTextCursor>
 #include <QTextBlockFormat>
+#include <QTextCharFormat>
+#include <QTextObject>
+
+#include <QRegularExpression>
 
 
 editWidget::editWidget(QWidget *parent)
@@ -26,16 +30,16 @@ editWidget::editWidget(QWidget *parent)
 
 
     //字体
-    label1 = new QLabel( tr( "" ) );
+    //label1 = new QLabel( tr( "" ) );
     fontBox = new QFontComboBox();
     fontBox->setFontFilters( QFontComboBox::ScalableFonts );
-    toolBar->addWidget( label1 );
+    //toolBar->addWidget( label1 );
     toolBar->addWidget( fontBox );
 
     //字号
-    label2 = new QLabel( tr( "" ) );
+    //label2 = new QLabel( tr( "" ) );
     sizeBox = new QComboBox();
-    toolBar->addWidget( label2 );
+    //toolBar->addWidget( label2 );
     toolBar->addWidget( sizeBox );
 
     QFontDatabase db;
@@ -73,6 +77,18 @@ editWidget::editWidget(QWidget *parent)
     connect( underlineBtn, SIGNAL( clicked() ), this, SLOT( slotUnder() ) );
     connect( colorBtn, SIGNAL( clicked() ), this, SLOT( slotColor() ) );
     connect( textedit, SIGNAL( currentCharFormatChanged( const QTextCharFormat & ) ), this, SLOT( slotNowFormatChanged( const QTextCharFormat& ) ) );
+
+
+
+    prevRefAction = new QAction(QIcon(":/ico/ico/prevref.png"), "上一个引用", this);
+    toolBar->addAction(prevRefAction);
+    connect(prevRefAction, SIGNAL(triggered()), this, SLOT(slotPrevRef()));
+
+    nextRefAction = new QAction(QIcon(":/ico/ico/nextref.png"), "上一个引用", this);
+    toolBar->addAction(nextRefAction);
+    connect(nextRefAction, SIGNAL(triggered()), this, SLOT(slotNextRef()));
+
+
 
 
     //设置布局 工具栏在上 编辑器在下
@@ -191,16 +207,113 @@ void editWidget::slotInsertReference(QString str)
 {
     qDebug() << str;
 
+    QTextDocument * doc = textedit->document();
     QTextCursor cursor(textedit->textCursor());
 
-    QTextCharFormat fmt(cursor.blockCharFormat());
+    //设置格式为上标
+    QTextCharFormat fmt(cursor.charFormat());
     fmt.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
 
-    cursor.insertText("[2]", fmt);
+    //查找上一个引用的数字
+    QRegularExpression re("\[[0-9]+\]");
+    QTextCursor c = doc->find(re, cursor, QTextDocument::FindBackward);
+    if (c.isNull()) //没有上一个引用 则从1开始编号
+    {
+        cursor.insertText("[1]", fmt);
+    }
+    else
+    {
+        QString id = c.selectedText();
+        //qDebug() << id;
+
+        id.replace("[", "");
+        id.replace("]", "");
+        //qDebug() << id;
+
+        int num = id.toInt();
+
+        //qDebug() << num;
+
+        QString str;
+        str.sprintf("[%d]", num+1);
+
+
+        cursor.insertText(str, fmt);
+
+
+
+    }
+
+    //插入后 后面的引用全部加1
+    bool first = true;
+
+    c = doc->find(re, cursor);
+    while (!c.isNull())
+    {
+        QString id = c.selectedText();
+        //qDebug() << id;
+
+        id.replace("[", "");
+        id.replace("]", "");
+        //qDebug() << id;
+
+        int num = id.toInt();
+
+        //qDebug() << num;
+
+        QString str;
+        str.sprintf("[%d]", num+1);
+
+        c.removeSelectedText();
+
+        QTextCharFormat fmt2(cursor.charFormat());
+        fmt2.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
+
+
+        c.insertText(str, fmt2);
+
+        c = doc->find(re, c);
+    }
 
 
 
 
 
 
+
+
+
+
+
+}
+
+
+void editWidget::slotPrevRef()
+{
+    QTextDocument * doc = textedit->document();
+    QTextCursor cursor(textedit->textCursor());
+
+    QRegularExpression re("\[[0-9]+\]");
+
+    textedit->setTextCursor(doc->find(re, cursor, QTextDocument::FindBackward));
+
+    qDebug() << "prev";
+}
+
+
+
+void editWidget::slotNextRef()
+{
+    QTextDocument * doc = textedit->document();
+
+    QTextCursor cursor(textedit->textCursor());
+
+
+    QRegularExpression re("\[[0-9]+\]");
+
+
+    textedit->setTextCursor(doc->find(re, cursor));
+
+
+    qDebug() << "next";
 }

@@ -30,6 +30,9 @@ protected slots:
     void slotNowFormatChanged( const QTextCharFormat & fmt );   //格式改变
     void mergeFormat(QTextCharFormat fmt);
 
+    void slotPrevRef();
+    void slotNextRef();
+
 public:
     void slotInsertReference(QString str);
 
@@ -47,6 +50,9 @@ private:
     QToolButton * italicBtn;
     QToolButton * underlineBtn;
     QToolButton * colorBtn;
+
+    QAction * prevRefAction;
+    QAction * nextRefAction;
 
     //编辑区域
     textEdit * textedit;
