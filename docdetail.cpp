@@ -16,6 +16,8 @@
 
 docdetail::docdetail(QWidget *parent) : QWidget(parent)
 {
+    rootpath = "E:\\Documents\\notes\\doc";
+
     table = new QTableView(this);
 
     model = new QStandardItemModel();
@@ -28,6 +30,7 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     table->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     num = 0;
+    num_total = 0;
 
 
     table->show();
@@ -64,6 +67,11 @@ docdetail::docdetail(QWidget *parent) : QWidget(parent)
     insertReference = new QAction(QIcon(":/ico/ico/insert_reference.png"), "插入参考标记", this);
     toolBar->addAction(insertReference);
     connect(insertReference, SIGNAL(triggered()), this, SLOT(slotInsertReference()));
+
+
+
+    readNumTotal();
+
 
 
 
@@ -112,12 +120,24 @@ void docdetail::slotImport(Docparam p)
     model->setItem(num, 3, new QStandardItem(p.year));
     model->setItem(num, 4, new QStandardItem(p.fullpath));
 
+    //存储该文献的唯一id
+    ++num_total;
+    model->setItem(num, 5, new QStandardItem(QString::number(num_total)));
+
+
+    refTable_path.append(nowpath);
+    refTable_pos.append(num);
+
+
 
     ++num;
 }
 
 void docdetail::slotNowDirChanged(QString path)
 {
+    save();
+
+
     nowpath = path;
     //qDebug() << nowpath;
 
@@ -151,21 +171,47 @@ void docdetail::save()
 
     for (int i = 0; i < num; ++i)
     {
-        for (int j = 0; j < 5; ++j)
+        for (int j = 0; j < 6; ++j)
         {
             out << model->item(i, j)->text() << endl;
         }
     }
     out.flush();
     f.close();
+
+
+    //存储总文献数量
+    path = rootpath + "/data.txt";
+    QFile f2(path);
+    f2.open(QIODevice::WriteOnly|QIODevice::Text);
+    QTextStream out2(&f2);
+    out2 << num << endl;
+
+
+    //存储文献索引表
+    int n = refTable_path.length();
+    for (int i = 1; i < n; ++i)
+    {
+        out2 << refTable_path[i] << endl;
+        out2 << refTable_pos[i] << endl;
+    }
+    out2.flush();
+    f2.close();
+
 }
 void docdetail::load()
 {
+
+
+
     QString path = nowpath + "/doc.txt";
     //qDebug() << path;
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        num = 0;
         return;
+    }
 
     QTextStream in(&f);
     num = in.readLine().toInt();
@@ -173,7 +219,7 @@ void docdetail::load()
 
     for (int i = 0; i < num; ++i)
     {
-        for (int j = 0; j < 5; ++j)
+        for (int j = 0; j < 6; ++j)
         {
             QString str = in.readLine();
             model->setItem(i, j, new QStandardItem(str));
@@ -190,6 +236,7 @@ void docdetail::setHeader()
     model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("出版地")));
     model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("年份")));
     model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("链接")));
+    model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("id")));
 }
 
 
@@ -241,6 +288,7 @@ void docdetail::slotCreateReference()
 
 }
 
+
 void docdetail::slotInsertReference()
 {
     int n = table->currentIndex().row();
@@ -248,8 +296,35 @@ void docdetail::slotInsertReference()
     QString str2 = model->data(model->index(n,1)).toString();
     QString str3 = model->data(model->index(n,2)).toString();
     QString str4 = model->data(model->index(n,3)).toString();
+    int str5 = model->data(model->index(n,5)).toInt();
 
     QString str = "  " + str2 + "." + str1 + "." + str3 + "." + str4;
 
-    emit signalInsertReference(str);
+    emit signalInsertReference(str, str5);
+}
+
+
+void docdetail::readNumTotal()
+{
+    refTable_path.clear();
+    refTable_pos.clear();
+
+    //初始化文献表
+    refTable_path.append("");
+    refTable_pos.append(num_total);
+
+    QString path = rootpath + "/data.txt";
+    QFile f(path);
+    if (f.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&f);
+        num_total = in.readLine().toInt();
+
+        for (int i = 0; i < num_total; ++i)
+        {
+            refTable_path.append(in.readLine());
+            refTable_pos.append(in.readLine().toInt());
+        }
+        f.close();
+    }
 }

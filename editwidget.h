@@ -11,6 +11,9 @@
 #include <QComboBox>
 #include <QToolButton>
 
+#include <QVector>
+
+
 class editWidget : public QWidget
 {
     Q_OBJECT
@@ -34,7 +37,7 @@ protected slots:
     void slotNextRef();
 
 public:
-    void slotInsertReference(QString str);
+    void slotInsertReference(QString str, int ref_id);
 
 
 private:
@@ -59,7 +62,11 @@ private:
 
     //内部数据结构
     QString name;
+    int ref_num;    //本文引用个数
 
+    QVector<int> refTable;  //存放文章中引用的所有文献
+    void saveRefTable();    //保存引用表
+    void loadRefTable();    //从文件加载引用表
 
 };
 

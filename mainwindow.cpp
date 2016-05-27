@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     nw = new noteWidget(this);
     dw = new docwidget(this);
 
-    connect(dw->dd, SIGNAL(signalInsertReference(QString)), this, SLOT(slotInsertReference(QString)));
+    connect(dw->dd, SIGNAL(signalInsertReference(QString, int)), this, SLOT(slotInsertReference(QString, int)));
 
     tabwidget->addTab(nw, "笔记");
     tabwidget->addTab(dw, "文献");
@@ -28,9 +28,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::slotInsertReference(QString str)
+void MainWindow::slotInsertReference(QString str, int ref_id)
 {
-    nw->ew->slotInsertReference(str);
+    nw->ew->slotInsertReference(str, ref_id);
 
     tabwidget->setCurrentIndex(0);
 }

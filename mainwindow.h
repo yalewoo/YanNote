@@ -25,7 +25,7 @@ private:
     QTabWidget * tabwidget;
 
 private slots:
-    void slotInsertReference(QString str);
+    void slotInsertReference(QString str, int ref_id);
 };
 
 #endif // MAINWINDOW_H

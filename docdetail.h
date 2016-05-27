@@ -8,6 +8,10 @@
 #include <QStandardItemModel>
 #include "docparam.h"
 
+#include <QVector>
+
+
+
 class docdetail : public QWidget
 {
     Q_OBJECT
@@ -31,8 +35,15 @@ protected slots:
 
 private:
     QToolBar * toolBar;
-    QString nowpath;
-    int num;
+    QString nowpath;    //当前分类路径
+    QString rootpath;
+    int num;    //存放当前分类文件数
+    int num_total;  //存放总文档数
+
+    QVector<QString> refTable_path; //文献的分类地址
+    QVector<int> refTable_pos;  //文献在分类中的序号
+
+
 
     QAction * saveAction;
     QAction * addAction;
@@ -49,8 +60,10 @@ private:
     void load();
     void setHeader();
 
+    void readNumTotal();
+
 signals:
-    void  signalInsertReference(QString);
+    void  signalInsertReference(QString, int);
 
 };
 

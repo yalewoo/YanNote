@@ -19,6 +19,10 @@
 
 editWidget::editWidget(QWidget *parent)
 {
+    ref_num = 0;
+    refTable.append(ref_num);
+
+
     toolBar = new QToolBar(this);
     toolBar->setIconSize(QSize(25, 25));
     textedit = new textEdit(this);
@@ -121,6 +125,8 @@ void editWidget::slotSave()
     textedit->document()->setModified(false);
 
     file.close();
+
+    saveRefTable();
 }
 
 void editWidget::loadText(QString str)
@@ -133,6 +139,8 @@ void editWidget::loadText(QString str)
     QTextStream in(&openFile);
     textedit->setText(in.readAll());
     openFile.close();
+
+    loadRefTable();
 }
 
 
@@ -203,8 +211,9 @@ void editWidget::mergeFormat(QTextCharFormat fmt)
        textedit->mergeCurrentCharFormat(fmt);
 }
 
-void editWidget::slotInsertReference(QString str)
+void editWidget::slotInsertReference(QString str, int ref_id)
 {
+    ++ref_num;
     int thisnum;
     qDebug() << str;
 
@@ -248,6 +257,8 @@ void editWidget::slotInsertReference(QString str)
             cursor.insertText("\n\n参考文献\n[1]");
             cursor.insertText(str);
 
+            refTable.append(ref_id);
+
             return;
         }
         else
@@ -272,6 +283,8 @@ void editWidget::slotInsertReference(QString str)
 
 
         cursor.insertText(str1, fmt);
+
+        refTable.insert(num+1, ref_id);
 
 
 
@@ -414,4 +427,57 @@ void editWidget::slotNextRef()
 
 
     qDebug() << "next";
+}
+
+
+void editWidget::saveRefTable()
+{
+
+    QString path = name;
+    path.replace(".", "2.");
+
+    QFile f2(path);
+    f2.open(QIODevice::WriteOnly|QIODevice::Text);
+    QTextStream out2(&f2);
+    out2 << ref_num << endl;
+
+
+    //存储文献索引表
+    int n = refTable.length();
+    for (int i = 1; i <= ref_num; ++i)
+    {
+        out2 << refTable[i] << endl;
+    }
+    out2.flush();
+    f2.close();
+}
+void editWidget::loadRefTable()
+{
+    QString path = name;
+    path.replace(".", "2.");
+
+
+
+    refTable.clear();
+
+
+
+
+    refTable.append(ref_num);
+
+
+    QFile f(path);
+    if (f.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&f);
+        ref_num = in.readLine().toInt();
+
+        for (int i = 0; i < ref_num; ++i)
+        {
+            refTable.append(in.readLine().toInt());
+        }
+        f.close();
+    }
+
+
 }

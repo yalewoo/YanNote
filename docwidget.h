@@ -21,6 +21,7 @@ public:
 
     docdetail * dd;
     doctree * dt;
+
 };
 
 #endif // DOCWIDGET_H
