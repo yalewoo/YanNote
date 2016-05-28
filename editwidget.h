@@ -46,6 +46,7 @@ private:
     //工具栏
     QToolBar * toolBar;
     QAction *saveAction;
+    bool firstload = true;
 
     QLabel * label1;
     QLabel * label2;

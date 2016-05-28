@@ -334,5 +334,11 @@ void docdetail::skipToRef(int id)
 {
     nowpath = refTable_path[id];
 
+    emit expandDir(nowpath);
+
     load();
+
+    table->selectRow(refTable_pos[id]);
 }
+
+

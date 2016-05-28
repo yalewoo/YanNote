@@ -119,7 +119,6 @@ void editWidget::slotSave()
 
     if (!file.open(QIODevice::WriteOnly))
     {
-        QMessageBox::warning(this, "ERROR", "Can't save the file", QMessageBox::Yes);
         return;
     }
 
@@ -136,6 +135,9 @@ void editWidget::slotSave()
 
 void editWidget::loadText(QString str)
 {
+    if (!firstload)
+        slotSave();
+
     name = str;
     QFile openFile(str);
 
@@ -146,6 +148,8 @@ void editWidget::loadText(QString str)
     openFile.close();
 
     loadRefTable();
+
+    firstload = false;
 }
 
 
@@ -468,20 +472,27 @@ void editWidget::loadRefTable()
 
 
 
-    refTable.append(ref_num);
+
 
 
     QFile f(path);
     if (f.open(QIODevice::ReadOnly|QIODevice::Text))
     {
+
         QTextStream in(&f);
         ref_num = in.readLine().toInt();
+        refTable.append(ref_num);
 
         for (int i = 0; i < ref_num; ++i)
         {
             refTable.append(in.readLine().toInt());
         }
         f.close();
+    }
+    else
+    {
+        ref_num = 0;
+        refTable.append(ref_num);
     }
 
 

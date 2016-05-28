@@ -8,6 +8,8 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
+#include <QModelIndex>
+
 doctree::doctree(QWidget *parent) : QTreeView(parent)
 {
     model = new QFileSystemModel;
@@ -34,6 +36,10 @@ doctree::doctree(QWidget *parent) : QTreeView(parent)
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuSlot(QPoint)));
+
+    QModelIndex ind = model->index("E:\\Documents\\notes\\doc\\根目录");
+    this->expand(ind);      //当前项展开
+    //treeView->scrollTo(index);    //定位到当前项
 
 }
 
@@ -145,5 +151,16 @@ void doctree::newDirSlot()
 
     QDir newdir;
     newdir.mkdir(newname);
+
+}
+
+
+void doctree::slotSkipRef(QString str)
+{
+    QModelIndex ind = model->index(str);
+    this->expand(ind);      //当前项展开
+    this->scrollTo(ind);    //定位到当前项
+    this->setCurrentIndex(ind);
+
 
 }

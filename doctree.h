@@ -28,6 +28,8 @@ public slots:
     void newFileSlot();
     void newDirSlot();
 
+    void slotSkipRef(QString str);
+
 private:
     QFileSystemModel *model;
     QFileInfo info;

@@ -67,6 +67,7 @@ private:
 
 signals:
     void  signalInsertReference(QString, int);
+    void expandDir(QString str);
 
 };
 
