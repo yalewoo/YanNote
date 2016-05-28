@@ -202,6 +202,7 @@ void docdetail::save()
 void docdetail::load()
 {
     model->clear();
+    setHeader();
 
 
     QString path = nowpath + "/doc.txt";

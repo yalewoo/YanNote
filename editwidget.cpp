@@ -25,7 +25,7 @@ editWidget::editWidget(QWidget *parent)
 
     toolBar = new QToolBar(this);
     toolBar->setIconSize(QSize(25, 25));
-    textedit = new textEdit(this);
+    textedit = new QTextEdit(this);
 
     saveAction = new QAction(QIcon(":/ico/ico/save.ico"), "保存", this);
     saveAction->setShortcut(QKeySequence::Save);
@@ -133,7 +133,7 @@ void editWidget::slotSave()
     saveRefTable();
 }
 
-void editWidget::loadText(QString str)
+void editWidget::slotLoadText(QString str)
 {
     if (!firstload)
         slotSave();

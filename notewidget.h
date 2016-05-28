@@ -1,17 +1,15 @@
 #ifndef NOTEWIDGET_H
 #define NOTEWIDGET_H
 
+/*
+    笔记部分主窗口 包含左边的树形分类显示和右边的编辑区域
+*/
 #include "editwidget.h"
 #include "notetree.h"
 
 class noteWidget : public QWidget
 {
     Q_OBJECT
-
-    QString filename;
-
-protected slots:
-    void reloadfileSlot(QString str);
 
 public:
     noteWidget(QWidget *parent = 0);

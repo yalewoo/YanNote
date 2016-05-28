@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     editwidget.cpp \
     notetree.cpp \
     notewidget.cpp \
-    textedit.cpp \
     docwidget.cpp \
     doctree.cpp \
     docdetail.cpp \
@@ -27,14 +26,13 @@ HEADERS  += mainwindow.h \
     editwidget.h \
     notetree.h \
     notewidget.h \
-    textedit.h \
     docwidget.h \
     doctree.h \
     docdetail.h \
     docparam.h \
     docimport_dialog.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
 RESOURCES += \
     res.qrc

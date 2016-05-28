@@ -1,7 +1,11 @@
 #ifndef EDITWIDGET_H
 #define EDITWIDGET_H
 
-#include "textedit.h"
+/*
+    编辑区
+*/
+
+#include <QTextEdit>
 
 #include <QToolBar>
 #include <QApplication>
@@ -21,7 +25,7 @@ class editWidget : public QWidget
 public:
     explicit editWidget(QWidget *parent = 0);
     ~editWidget();
-    void loadText(QString str);
+
 protected slots:
     void slotSave();    //保存文件
     void slotFont( QString f ); //设置字体
@@ -30,40 +34,41 @@ protected slots:
     void slotItalic();  //斜体
     void slotUnder();   //下划线
     void slotColor();   //设置颜色
+
     void slotNowFormatChanged( const QTextCharFormat & fmt );   //格式改变
     void mergeFormat(QTextCharFormat fmt);
+    void slotLoadText(QString str);
 
-    void slotPrevRef();
-    void slotNextRef();
+    void slotPrevRef(); //跳转到上一个引用处
+    void slotNextRef(); //跳转到下一个引用处
 
-    void slotSkipToRef();
+    void slotSkipToRef();   //跳转到文献位置处
 
 public:
-    void slotInsertReference(QString str, int ref_id);
+    void slotInsertReference(QString str, int ref_id);  //插入引用
 
 
 private:
     //工具栏
     QToolBar * toolBar;
-    QAction *saveAction;
+    QAction *saveAction;    //保存笔记
     bool firstload = true;
 
-    QLabel * label1;
-    QLabel * label2;
-    QFontComboBox * fontBox;
-    QComboBox * sizeBox;
-    QToolButton * boldBtn;
-    QToolButton * italicBtn;
-    QToolButton * underlineBtn;
-    QToolButton * colorBtn;
 
-    QAction * prevRefAction;
-    QAction * nextRefAction;
+    QFontComboBox * fontBox;    //字体
+    QComboBox * sizeBox;    //字号
+    QToolButton * boldBtn;  //粗体
+    QToolButton * italicBtn;    //斜体
+    QToolButton * underlineBtn; //下划线
+    QToolButton * colorBtn; //颜色
 
-    QAction *skipRefAction;
+    QAction * prevRefAction;    //上一个引用
+    QAction * nextRefAction;    //下一个引用
+
+    QAction *skipRefAction; //跳转到文献面板
 
     //编辑区域
-    textEdit * textedit;
+    QTextEdit * textedit;
 
     //内部数据结构
     QString name;

@@ -19,11 +19,7 @@ noteWidget::noteWidget(QWidget *parent) : QWidget(parent)
 
     this->setLayout(layout);
 
-    connect(nt, SIGNAL(doubleclicked(QString)), this, SLOT(reloadfileSlot(QString)));
+    //双击笔记时打开笔记
+    connect(nt, SIGNAL(doubleclicked(QString)), ew, SLOT(slotLoadText(QString)));
 }
 
-
-void noteWidget::reloadfileSlot(QString str)
-{
-    ew->loadText(str);
-}
