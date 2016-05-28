@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(dw->dd, SIGNAL(signalInsertReference(QString, int)), this, SLOT(slotInsertReference(QString, int)));
 
+    connect(nw->ew, SIGNAL(signalSkipToRef(int)), this, SLOT(slotSkipToRef(int)));
+
     tabwidget->addTab(nw, "笔记");
     tabwidget->addTab(dw, "文献");
 
@@ -33,4 +35,11 @@ void MainWindow::slotInsertReference(QString str, int ref_id)
     nw->ew->slotInsertReference(str, ref_id);
 
     tabwidget->setCurrentIndex(0);
+}
+
+void MainWindow::slotSkipToRef(int id)
+{
+    dw->dd->skipToRef(id);
+
+    tabwidget->setCurrentIndex(1);
 }

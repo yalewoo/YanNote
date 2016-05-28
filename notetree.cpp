@@ -14,6 +14,12 @@ noteTree::noteTree(QWidget *parent) : QTreeView(parent)
     model = new QFileSystemModel;
     model->setReadOnly(false);
 
+    QStringList strlist;
+    strlist << QString("*.html");
+    model->setNameFilters(strlist);
+    model->setNameFilterDisables(false);//只显示笔记 不显示引用文件
+
+
     //qDebug() << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 
 

@@ -21,6 +21,7 @@ public:
     QTableView * table;
 
     void loadSlot(QString str);
+    void skipToRef(int id);
 
 protected slots:
     void slotSave();    //保存
@@ -32,6 +33,8 @@ protected slots:
 
     void slotImport(Docparam p);
     void slotNowDirChanged(QString path);
+
+
 
 private:
     QToolBar * toolBar;

@@ -26,6 +26,7 @@ private:
 
 private slots:
     void slotInsertReference(QString str, int ref_id);
+    void slotSkipToRef(int id);
 };
 
 #endif // MAINWINDOW_H

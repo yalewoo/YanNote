@@ -93,6 +93,11 @@ editWidget::editWidget(QWidget *parent)
     connect(nextRefAction, SIGNAL(triggered()), this, SLOT(slotNextRef()));
 
 
+    skipRefAction = new QAction(QIcon(":/ico/ico/skipRef.png"), "跳转到文献", this);
+    toolBar->addAction(skipRefAction);
+    connect(skipRefAction, SIGNAL(triggered()), this, SLOT(slotSkipToRef()));
+
+
 
 
     //设置布局 工具栏在上 编辑器在下
@@ -434,7 +439,7 @@ void editWidget::saveRefTable()
 {
 
     QString path = name;
-    path.replace(".", "2.");
+    path.replace(".", ".2");
 
     QFile f2(path);
     f2.open(QIODevice::WriteOnly|QIODevice::Text);
@@ -454,7 +459,7 @@ void editWidget::saveRefTable()
 void editWidget::loadRefTable()
 {
     QString path = name;
-    path.replace(".", "2.");
+    path.replace(".", ".2");
 
 
 
@@ -478,6 +483,42 @@ void editWidget::loadRefTable()
         }
         f.close();
     }
+
+
+}
+
+
+void editWidget::slotSkipToRef()
+{
+    //获取光标处序号
+    QTextDocument * doc = textedit->document();
+    QTextCursor cursor(textedit->textCursor());
+
+    QTextCursor c1 = doc->find("[", cursor,  QTextDocument::FindBackward);
+    if (!c1.isNull())
+    {
+
+        //查找上一个引用的数字
+        QRegularExpression re("\[[0-9]+\]");
+        QTextCursor c2 = doc->find(re, c1);
+
+        QString id = c2.selectedText();
+
+        id.replace("[", "");
+        id.replace("]", "");
+
+        int num = id.toInt();
+
+        qDebug() << "this is " << num;
+
+
+        int n = refTable[num];
+
+        emit signalSkipToRef(n);
+
+    }
+
+
 
 
 }

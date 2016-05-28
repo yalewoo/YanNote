@@ -185,7 +185,7 @@ void docdetail::save()
     QFile f2(path);
     f2.open(QIODevice::WriteOnly|QIODevice::Text);
     QTextStream out2(&f2);
-    out2 << num << endl;
+    out2 << num_total << endl;
 
 
     //存储文献索引表
@@ -201,7 +201,7 @@ void docdetail::save()
 }
 void docdetail::load()
 {
-
+    model->clear();
 
 
     QString path = nowpath + "/doc.txt";
@@ -327,4 +327,12 @@ void docdetail::readNumTotal()
         }
         f.close();
     }
+}
+
+
+void docdetail::skipToRef(int id)
+{
+    nowpath = refTable_path[id];
+
+    load();
 }

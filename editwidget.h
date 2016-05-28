@@ -36,6 +36,8 @@ protected slots:
     void slotPrevRef();
     void slotNextRef();
 
+    void slotSkipToRef();
+
 public:
     void slotInsertReference(QString str, int ref_id);
 
@@ -57,6 +59,8 @@ private:
     QAction * prevRefAction;
     QAction * nextRefAction;
 
+    QAction *skipRefAction;
+
     //编辑区域
     textEdit * textedit;
 
@@ -67,6 +71,10 @@ private:
     QVector<int> refTable;  //存放文章中引用的所有文献
     void saveRefTable();    //保存引用表
     void loadRefTable();    //从文件加载引用表
+
+
+signals:
+    void signalSkipToRef(int id);
 
 };
 
