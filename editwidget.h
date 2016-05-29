@@ -52,7 +52,7 @@ private:
     //工具栏
     QToolBar * toolBar;
     QAction *saveAction;    //保存笔记
-    bool firstload = true;
+    bool firstload = true;      //是否第一次加载笔记
 
 
     QFontComboBox * fontBox;    //字体
@@ -71,7 +71,7 @@ private:
     QTextEdit * textedit;
 
     //内部数据结构
-    QString name;
+    QString notepath;   //当前打开笔记的路径
     int ref_num;    //本文引用个数
 
     QVector<int> refTable;  //存放文章中引用的所有文献
@@ -80,7 +80,7 @@ private:
 
 
 signals:
-    void signalSkipToRef(int id);
+    void signalSkipToRef(int id);   //点击跳转到文献处后发出的信号
 
 };
 

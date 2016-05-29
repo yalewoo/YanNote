@@ -17,16 +17,20 @@
 #include <QRegularExpression>
 
 
-editWidget::editWidget(QWidget *parent)
+editWidget::editWidget(QWidget *parent) : QWidget(parent)
 {
     ref_num = 0;
     refTable.append(ref_num);
 
 
+    //创建工具栏
     toolBar = new QToolBar(this);
     toolBar->setIconSize(QSize(25, 25));
+
+    //创建编辑窗口
     textedit = new QTextEdit(this);
 
+    //保存按钮
     saveAction = new QAction(QIcon(":/ico/ico/save.ico"), "保存", this);
     saveAction->setShortcut(QKeySequence::Save);
     toolBar->addAction(saveAction);
@@ -34,18 +38,12 @@ editWidget::editWidget(QWidget *parent)
 
 
     //字体
-    //label1 = new QLabel( tr( "" ) );
     fontBox = new QFontComboBox();
     fontBox->setFontFilters( QFontComboBox::ScalableFonts );
-    //toolBar->addWidget( label1 );
     toolBar->addWidget( fontBox );
-
     //字号
-    //label2 = new QLabel( tr( "" ) );
     sizeBox = new QComboBox();
-    //toolBar->addWidget( label2 );
     toolBar->addWidget( sizeBox );
-
     QFontDatabase db;
     foreach( int nSize, db.standardSizes() )
            sizeBox->addItem( QString::number( nSize ) );
@@ -57,18 +55,21 @@ editWidget::editWidget(QWidget *parent)
     boldBtn->setIcon( QIcon( ":/ico/ico/format_text_bold.ico" ) );
     boldBtn->setCheckable( true );
     toolBar->addWidget( boldBtn );
-
+    //斜体
     italicBtn = new QToolButton();
     italicBtn->setIcon( QIcon( ":/ico/ico/format_text_italic.ico" ) );
     italicBtn->setCheckable( true );
     toolBar->addWidget( italicBtn );
-
+    //下划线
     underlineBtn = new QToolButton();
     underlineBtn->setIcon( QIcon( ":/ico/ico/format_text_underline.ico" ) );
     underlineBtn->setCheckable( true );
     toolBar->addWidget( underlineBtn );
 
     toolBar->addSeparator();
+
+
+    //颜色
     colorBtn = new QToolButton();
     colorBtn->setIcon( QIcon( ":/ico/ico/format_color.ico" ) );
     toolBar->addWidget( colorBtn );
@@ -83,20 +84,19 @@ editWidget::editWidget(QWidget *parent)
     connect( textedit, SIGNAL( currentCharFormatChanged( const QTextCharFormat & ) ), this, SLOT( slotNowFormatChanged( const QTextCharFormat& ) ) );
 
 
-
+    //上一个引用
     prevRefAction = new QAction(QIcon(":/ico/ico/prevref.png"), "上一个引用", this);
     toolBar->addAction(prevRefAction);
     connect(prevRefAction, SIGNAL(triggered()), this, SLOT(slotPrevRef()));
-
+    //下一个引用
     nextRefAction = new QAction(QIcon(":/ico/ico/nextref.png"), "上一个引用", this);
     toolBar->addAction(nextRefAction);
     connect(nextRefAction, SIGNAL(triggered()), this, SLOT(slotNextRef()));
 
-
+    //跳转到参考文献
     skipRefAction = new QAction(QIcon(":/ico/ico/skipRef.png"), "跳转到文献", this);
     toolBar->addAction(skipRefAction);
     connect(skipRefAction, SIGNAL(triggered()), this, SLOT(slotSkipToRef()));
-
 
 
 
@@ -112,10 +112,10 @@ editWidget::~editWidget()
 
 }
 
-
+//点击保存按钮后的动作
 void editWidget::slotSave()
 {
-    QFile file(name);
+    QFile file(notepath);
 
     if (!file.open(QIODevice::WriteOnly))
     {
@@ -130,6 +130,7 @@ void editWidget::slotSave()
 
     file.close();
 
+    //保存文献信息表
     saveRefTable();
 }
 
@@ -138,7 +139,7 @@ void editWidget::slotLoadText(QString str)
     if (!firstload)
         slotSave();
 
-    name = str;
+    notepath = str;
     QFile openFile(str);
 
     if (!openFile.open(QIODevice::ReadOnly))
@@ -153,42 +154,42 @@ void editWidget::slotLoadText(QString str)
 }
 
 
-
+//设置字体
 void editWidget::slotFont(QString f)
 {
        QTextCharFormat fmt;
        fmt.setFontFamily(f);
        mergeFormat(fmt);
 }
-
+//设置字号
 void editWidget::slotSize(QString num)
 {
        QTextCharFormat fmt;
        fmt.setFontPointSize(num.toFloat());
        mergeFormat(fmt);
 }
-
+//加粗
 void editWidget::slotBold()
 {
        QTextCharFormat fmt;
        fmt.setFontWeight(boldBtn->isChecked() ? QFont::Bold : QFont::Normal);
        mergeFormat(fmt);
 }
-
+//斜体
 void editWidget::slotItalic()
 {
        QTextCharFormat fmt;
        fmt.setFontItalic(italicBtn->isChecked());
        mergeFormat(fmt);
 }
-
+//下划线
 void editWidget::slotUnder()
 {
        QTextCharFormat fmt;
        fmt.setFontUnderline(underlineBtn->isChecked());
        mergeFormat(fmt);
 }
-
+//设置颜色
 void editWidget::slotColor()
 {
        QColor color = QColorDialog::getColor(Qt::red, this);
@@ -200,6 +201,7 @@ void editWidget::slotColor()
               mergeFormat(fmt);
        }
 }
+
 //当光标所在处的字符格式发生变化时调用，函数根据新的字符格式把工具栏上的各个格式控件的显示更新
 void editWidget::slotNowFormatChanged(const QTextCharFormat & fmt)
 {
@@ -220,12 +222,19 @@ void editWidget::mergeFormat(QTextCharFormat fmt)
        textedit->mergeCurrentCharFormat(fmt);
 }
 
+/*  插入参考文献 str是引用时的文字格式 ref_id是引用文献对应的唯一编号
+    该函数在文本中查找光标处上下文引用，生成正确的编号 并更新后面的编号
+    该函数还要修改参考文献后面的引用
+*/
 void editWidget::slotInsertReference(QString str, int ref_id)
 {
+    //本笔记引用数加1
     ++ref_num;
-    int thisnum;
-    qDebug() << str;
 
+    int thisnum;
+    //qDebug() << str;
+
+    //获取编辑区文档和光标 以供后面修改
     QTextDocument * doc = textedit->document();
     QTextCursor cursor(textedit->textCursor());
 
@@ -238,7 +247,7 @@ void editWidget::slotInsertReference(QString str, int ref_id)
     QTextCursor c = doc->find(re, cursor, QTextDocument::FindBackward);
     QTextCursor c2 = doc->find(re, cursor);
 
-
+    //查找“参考文献”所在光标的位置
     QTextCursor ref_pos;
     QTextCursor ref_pos2;
     ref_pos = doc->find("参考文献", cursor);
@@ -250,7 +259,7 @@ void editWidget::slotInsertReference(QString str, int ref_id)
 
 
 
-    bool atfirst = false;
+    bool atfirst = false;   //标记插入位置是否是第一个引用之前
     if (c.isNull()) //没有上一个引用 则从1开始编号
     {
         thisnum = 1;
@@ -294,8 +303,6 @@ void editWidget::slotInsertReference(QString str, int ref_id)
         cursor.insertText(str1, fmt);
 
         refTable.insert(num+1, ref_id);
-
-
 
     }
 
@@ -360,9 +367,6 @@ void editWidget::slotInsertReference(QString str, int ref_id)
         toinsert = toinsert + str;
         refc2.insertText(toinsert);
 
-
-
-
     }
 
 
@@ -396,18 +400,9 @@ void editWidget::slotInsertReference(QString str, int ref_id)
     }
 
 
-
-
-
-
-
-
-
-
-
 }
 
-
+//跳转到上一个引用
 void editWidget::slotPrevRef()
 {
     QTextDocument * doc = textedit->document();
@@ -419,9 +414,7 @@ void editWidget::slotPrevRef()
 
     qDebug() << "prev";
 }
-
-
-
+//跳转到下一个引用
 void editWidget::slotNextRef()
 {
     QTextDocument * doc = textedit->document();
@@ -438,11 +431,11 @@ void editWidget::slotNextRef()
     qDebug() << "next";
 }
 
-
+//保存该笔记的文献表
 void editWidget::saveRefTable()
 {
 
-    QString path = name;
+    QString path = notepath;
     path.replace(".", ".2");
 
     QFile f2(path);
@@ -460,18 +453,15 @@ void editWidget::saveRefTable()
     out2.flush();
     f2.close();
 }
+//加载本笔记的文献表
 void editWidget::loadRefTable()
 {
-    QString path = name;
+    QString path = notepath;
     path.replace(".", ".2");
 
 
 
     refTable.clear();
-
-
-
-
 
 
 
@@ -498,7 +488,7 @@ void editWidget::loadRefTable()
 
 }
 
-
+//跳转到该处引用对应的文献处
 void editWidget::slotSkipToRef()
 {
     //获取光标处序号
@@ -528,8 +518,6 @@ void editWidget::slotSkipToRef()
         emit signalSkipToRef(n);
 
     }
-
-
 
 
 }

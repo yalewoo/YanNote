@@ -12,16 +12,9 @@ class docwidget : public QWidget
 public:
     docwidget(QWidget * parent = 0);
 
-    QString filename;
-
-protected slots:
-
-
 public:
-
-    docdetail * dd;
-    doctree * dt;
-
+    docdetail * dd; //文献详细信息界面
+    doctree * dt;   //文献分类显示界面
 };
 
 #endif // DOCWIDGET_H

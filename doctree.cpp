@@ -58,7 +58,7 @@ void doctree::mouseDoubleClickEvent(QMouseEvent *event)
 
     }
 }
-
+//鼠标单击
 void doctree::mousePressEvent(QMouseEvent *event)
 {
     QTreeView::mousePressEvent(event);
@@ -87,16 +87,14 @@ void doctree::customContextMenuSlot(const QPoint p)
 
     QMenu *menu = new QMenu;
 
-    if (info.isDir())
-    {
-        menu->addAction(QString("新建笔记"), this, SLOT(newFileSlot()));
-        menu->addAction(QString("新建分类"), this, SLOT(newDirSlot()));
-    }
+
+
+    menu->addAction(QString("新建分类"), this, SLOT(newDirSlot()));
+
 
     menu->addAction(QString("重命名"), this, SLOT(renameSlot()));
-    //menu->addAction(QString("Export"), this, SLOT(slotTest()));
-    menu->exec(QCursor::pos());
 
+    menu->exec(QCursor::pos());
 
 }
 
@@ -117,25 +115,7 @@ void doctree::renameSlot()
     file.close();
 }
 
-void doctree::newFileSlot()
-{
-    QString path = info.filePath();
 
-    QString text = QInputDialog::getText(NULL, "输入新文件名",
-                                   "输入新文件名",
-                                   QLineEdit::Normal,
-                                   "未命名");
-
-    QString newname = path + "/" + text + ".html";
-
-
-
-    QFile file(newname);
-    file.open( QIODevice::WriteOnly);
-    file.close();
-
-    emit doubleclicked(newname);
-}
 
 void doctree::newDirSlot()
 {

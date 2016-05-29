@@ -25,7 +25,6 @@ signals:
 public slots:
     void customContextMenuSlot(const QPoint p);
     void renameSlot();
-    void newFileSlot();
     void newDirSlot();
 
     void slotSkipRef(QString str);
