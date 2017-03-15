@@ -98,6 +98,13 @@ editWidget::editWidget(QWidget *parent) : QWidget(parent)
     toolBar->addAction(skipRefAction);
     connect(skipRefAction, SIGNAL(triggered()), this, SLOT(slotSkipToRef()));
 
+    //删除参考文献
+    deleteRefAction = new QAction(QIcon(":/ico/ico/deletered.ico"), "删除文献", this);
+    toolBar->addAction(deleteRefAction);
+    connect(deleteRefAction, SIGNAL(triggered()), this, SLOT(deleteRef()));
+
+
+
 
 
     //设置布局 工具栏在上 编辑器在下
@@ -250,12 +257,12 @@ void editWidget::slotInsertReference(QString str, int ref_id)
     //查找“参考文献”所在光标的位置
     QTextCursor ref_pos;
     QTextCursor ref_pos2;
-    ref_pos = doc->find("参考文献", cursor);
-    while (!ref_pos.isNull())
-    {
-        ref_pos2 = ref_pos;
-        ref_pos = doc->find("参考文献", ref_pos);
-    }
+    ref_pos2 = doc->find("参考文献", cursor);
+//    while (!ref_pos.isNull())
+//    {
+//        ref_pos2 = ref_pos;
+//        ref_pos = doc->find("参考文献", ref_pos);
+//    }
 
 
 
@@ -280,7 +287,10 @@ void editWidget::slotInsertReference(QString str, int ref_id)
             return;
         }
         else
+        {
             cursor.insertText("[1]", fmt);
+            refTable.insert(1, ref_id);
+        }
     }
     else
     {
@@ -359,8 +369,11 @@ void editWidget::slotInsertReference(QString str, int ref_id)
         tofind.sprintf("[%d]", thisnum);
 
         refc2 = doc->find(tofind, refc2);
+        refc2.select(QTextCursor::BlockUnderCursor);
+        QString t1 = refc2.selectedText();
+        qDebug() << t1;
 
-        refc2.movePosition(QTextCursor::EndOfLine);
+        refc2.movePosition(QTextCursor::EndOfBlock);
 
         QString toinsert;
         toinsert.sprintf("\n[%d]", thisnum+1);
@@ -519,5 +532,155 @@ void editWidget::slotSkipToRef()
 
     }
 
+
+}
+
+
+void editWidget::deleteRef()
+{
+
+
+    int thisnum;
+    //qDebug() << str;
+
+    //获取编辑区文档和光标 以供后面修改
+    QTextDocument * doc = textedit->document();
+    QTextCursor cursor(textedit->textCursor());
+
+
+
+    //查找上一个引用的数字
+    QRegularExpression re("\[[0-9]+\]");
+    QTextCursor c = doc->find(re, cursor, QTextDocument::FindBackward);
+    QTextCursor c2 = doc->find(re, cursor);
+
+    //查找“参考文献”所在光标的位置
+    QTextCursor ref_pos;
+    QTextCursor ref_pos2;
+    ref_pos2 = doc->find("参考文献", cursor);
+//    while (!ref_pos.isNull())
+//    {
+//        ref_pos2 = ref_pos;
+//        ref_pos = doc->find("参考文献", ref_pos);
+//    }
+
+
+
+    bool atfirst = false;   //标记插入位置是否是第一个引用之前
+    if (c.isNull()) //没有上一个引用 则从1开始编号
+    {
+        return;
+    }
+    else
+    {
+        //本笔记引用数减1
+        --ref_num;
+
+
+        QString id = c.selectedText();
+        //qDebug() << id;
+
+        id.replace("[", "");
+        id.replace("]", "");
+        //qDebug() << id;
+
+        int num = id.toInt();
+        thisnum = num;
+
+        c.removeSelectedText();
+
+        refTable.remove(num);
+
+    }
+
+    //插入后 后面的引用全部减1
+
+    c = doc->find(re, cursor);
+    while (!c.isNull() && c < ref_pos2)
+    {
+        QString id = c.selectedText();
+
+        id.replace("[", "");
+        id.replace("]", "");
+
+        int num = id.toInt();
+
+        QString str1;
+        str1.sprintf("[%d]", num-1);
+
+
+
+        QTextCharFormat fmt2(c.charFormat());
+        fmt2.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
+
+        c.removeSelectedText();
+
+        c.insertText(str1, fmt2);
+
+        c = doc->find(re, c);
+
+
+    }
+
+
+    //修改参考文献处
+
+    QTextCursor refc2 = ref_pos2;
+
+
+
+    QString tofind;
+
+
+    tofind.sprintf("[%d]", thisnum);
+
+    refc2 = doc->find(tofind, refc2);
+
+
+
+    refc2.select(QTextCursor::BlockUnderCursor);
+
+    refc2.removeSelectedText();
+
+
+
+
+
+
+
+
+
+    //递减
+    QRegularExpression re2("\[[0-9]+\]");
+    c = doc->find(re2, refc2);
+
+    while (!c.isNull())
+    {
+        QString id = c.selectedText();
+        //qDebug() << id;
+
+        id.replace("[", "");
+        id.replace("]", "");
+
+
+        int num = id.toInt();
+
+
+        QString str1;
+        str1.sprintf("[%d]", num-1);
+
+        c.removeSelectedText();
+
+
+        c.insertText(str1);
+
+        c = doc->find(re2, c);
+
+    }
+
+    if (ref_num == 0)
+    {
+        ref_pos2.removeSelectedText();
+    }
 
 }

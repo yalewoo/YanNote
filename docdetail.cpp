@@ -16,7 +16,7 @@
 
 docdetail::docdetail(QWidget *parent) : QWidget(parent)
 {
-    rootpath = "E:\\Documents\\notes\\doc";
+    rootpath = "D:\\notes\\doc";
 
     table = new QTableView(this);
 
@@ -235,7 +235,7 @@ void docdetail::setHeader()
     model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("标题")));
     model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("作者")));
     model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("出版地")));
-    model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("年份")));
+    model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("年份代码")));
     model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("链接")));
     model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("id")));
 }

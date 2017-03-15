@@ -28,8 +28,8 @@ public:
 
 protected slots:
     void slotSave();    //保存文件
-    void slotFont( QString f ); //设置字体
-    void slotSize( QString num );   //设置字号
+    void slotFont(QString f); //设置字体
+    void slotSize(QString num);   //设置字号
     void slotBold();    //加粗
     void slotItalic();  //斜体
     void slotUnder();   //下划线
@@ -37,12 +37,14 @@ protected slots:
 
     void slotNowFormatChanged( const QTextCharFormat & fmt );   //格式改变
     void mergeFormat(QTextCharFormat fmt);
+
     void slotLoadText(QString str);
 
     void slotPrevRef(); //跳转到上一个引用处
     void slotNextRef(); //跳转到下一个引用处
 
     void slotSkipToRef();   //跳转到文献位置处
+    void deleteRef();   //删除该引用
 
 public:
     void slotInsertReference(QString str, int ref_id);  //插入引用
@@ -66,6 +68,7 @@ private:
     QAction * nextRefAction;    //下一个引用
 
     QAction *skipRefAction; //跳转到文献面板
+    QAction *deleteRefAction;   //删除引用
 
     //编辑区域
     QTextEdit * textedit;

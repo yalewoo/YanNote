@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -17,11 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(nw->ew, SIGNAL(signalSkipToRef(int)), this, SLOT(slotSkipToRef(int)));
 
     tabwidget->addTab(nw, "笔记");
-    tabwidget->addTab(dw, "文献");
+    tabwidget->addTab(dw, "文献管理");
 
     this->resize(1000, 600);
 
     this->setCentralWidget(tabwidget);
+
+    this->setWindowTitle("资料笔记综合管理系统");
 }
 
 MainWindow::~MainWindow()

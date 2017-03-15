@@ -24,11 +24,11 @@ noteTree::noteTree(QWidget *parent) : QTreeView(parent)
 
 
     //设置笔记所在的目录
-    model->setRootPath("E:\\Documents\\notes\\note");
+    model->setRootPath("D:\\notes\\note");
 
     //将TreeView绑定model
     this->setModel(model);
-    this->setRootIndex(model->index("E:\\Documents\\notes\\note"));
+    this->setRootIndex(model->index("D:\\notes\\note"));
 
     //设置表头
     this->header()->setStretchLastSection(true);
