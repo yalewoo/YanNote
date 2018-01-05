@@ -40,6 +40,9 @@ protected slots:
 
     void slotLoadText(QString str);
 
+    void slotFind();   //查找
+    void showFindText();    //显示查找框
+
     void slotPrevRef(); //跳转到上一个引用处
     void slotNextRef(); //跳转到下一个引用处
 
@@ -63,6 +66,10 @@ private:
     QToolButton * italicBtn;    //斜体
     QToolButton * underlineBtn; //下划线
     QToolButton * colorBtn; //颜色
+
+    QDialog *findDlg;
+    QLineEdit * findLineEdit;
+    QAction * findAction;   //查找
 
     QAction * prevRefAction;    //上一个引用
     QAction * nextRefAction;    //下一个引用

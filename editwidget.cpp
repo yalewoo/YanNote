@@ -16,6 +16,9 @@
 
 #include <QRegularExpression>
 
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 editWidget::editWidget(QWidget *parent) : QWidget(parent)
 {
@@ -67,6 +70,21 @@ editWidget::editWidget(QWidget *parent) : QWidget(parent)
     toolBar->addWidget( underlineBtn );
 
     toolBar->addSeparator();
+
+    //查找按钮
+    findAction = new QAction(QIcon(":/ico/ico/lookup.png"), "查找", this);
+    findAction->setShortcut(QKeySequence::Find);
+    toolBar->addAction(findAction);
+    connect(findAction, SIGNAL(triggered()), this, SLOT(showFindText()));
+
+    findDlg = new QDialog(this);
+    findDlg->setWindowTitle("查找");
+    findLineEdit = new QLineEdit(findDlg);
+    QPushButton *btn = new QPushButton("查找下一个", findDlg);
+    QVBoxLayout * layout_finddlg = new QVBoxLayout(findDlg);
+    layout_finddlg->addWidget(findLineEdit);
+    layout_finddlg->addWidget(btn);
+    connect(btn, &QPushButton::clicked, this, &editWidget::slotFind);
 
 
     //颜色
@@ -158,6 +176,20 @@ void editWidget::slotLoadText(QString str)
     loadRefTable();
 
     firstload = false;
+}
+
+void editWidget::slotFind()
+{
+    QString str = findLineEdit->text();
+    if (!textedit->find(str, QTextDocument::FindBackward))
+    {
+        QMessageBox::warning(this, "查找", "找不到 "+ str);
+    }
+}
+
+void editWidget::showFindText()
+{
+   findDlg->show();
 }
 
 

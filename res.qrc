@@ -16,5 +16,6 @@
         <file>ico/prevref.png</file>
         <file>ico/skipRef.png</file>
         <file>ico/deletered.ico</file>
+        <file>ico/lookup.png</file>
     </qresource>
 </RCC>
